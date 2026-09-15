@@ -1,18 +1,392 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-void main()=>runApp(const UcariApp());
-const gold=Color(0xFFD7AA43),ink=Color(0xFF17130F),cream=Color(0xFFF8F4EC);
-class UcariApp extends StatelessWidget{const UcariApp({super.key});@override Widget build(BuildContext c)=>MaterialApp(debugShowCheckedModeBanner:false,title:'UÇARI Yayınevi',theme:ThemeData(useMaterial3:true,scaffoldBackgroundColor:cream,colorScheme:ColorScheme.fromSeed(seedColor:gold)),home:const Shell());}
-class Book{final String title,author,category;final int price;const Book(this.title,this.author,this.category,this.price);}const books=[Book('Kayıp Zaman','Ahmet Demir','Roman',280),Book('Sessiz Nehir','Elif Kaya','Roman',240),Book('Dağın Ötesi','Murat Arslan','Macera',300),Book('Gölgedeki Işık','Zeynep Yıldız','Şiir',220)];
-class Shell extends StatefulWidget{const Shell({super.key});@override State<Shell> createState()=>_ShellState();}
-class _ShellState extends State<Shell>{int index=0;@override Widget build(BuildContext c){final pages=[const HomePage(),const BooksPage(),const AuthorPage(),const CartPage(),const AccountPage()];return Scaffold(body:SafeArea(child:pages[index]),bottomNavigationBar:NavigationBar(selectedIndex:index,indicatorColor:gold.withValues(alpha:.25),onDestinationSelected:(v)=>setState(()=>index=v),destinations:const [NavigationDestination(icon:Icon(Icons.home_outlined),label:'Ana Sayfa'),NavigationDestination(icon:Icon(Icons.menu_book_outlined),label:'Kitaplar'),NavigationDestination(icon:Icon(Icons.edit_note),label:'Yazar Ol'),NavigationDestination(icon:Icon(Icons.shopping_cart_outlined),label:'Sepet'),NavigationDestination(icon:Icon(Icons.person_outline),label:'Hesabım')]));}}
-class Header extends StatelessWidget{final String title;const Header(this.title,{super.key});@override Widget build(BuildContext c)=>Padding(padding:const EdgeInsets.all(20),child:Row(children:[const CircleAvatar(backgroundColor:ink,child:Icon(Icons.auto_stories,color:gold)),const SizedBox(width:10),Expanded(child:Text(title,style:const TextStyle(fontSize:20,fontWeight:FontWeight.bold))),const Icon(Icons.notifications_none)]));}
-class HomePage extends StatelessWidget{const HomePage({super.key});@override Widget build(BuildContext c)=>ListView(children:[const Header('UÇARI YAYINEVİ'),const Padding(padding:EdgeInsets.symmetric(horizontal:20),child:SearchBar(hintText:'Kitap, yazar veya kategori ara...',leading:Icon(Icons.search))),Container(margin:const EdgeInsets.all(20),padding:const EdgeInsets.all(24),decoration:BoxDecoration(color:ink,borderRadius:BorderRadius.circular(20)),child:const Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text('Her hikaye,\nbir iz bırakır.',style:TextStyle(color:Colors.white,fontSize:28,fontWeight:FontWeight.bold)),SizedBox(height:12),Text('UÇARI YAYINEVİ',style:TextStyle(color:gold))])),const Padding(padding:EdgeInsets.all(20),child:Text('Yeni Çıkanlar',style:TextStyle(fontSize:20,fontWeight:FontWeight.bold))),...books.map((b)=>BookTile(b))]);}
-class BookTile extends StatelessWidget{final Book book;const BookTile(this.book,{super.key});@override Widget build(BuildContext c)=>ListTile(onTap:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>BookDetail(book))),leading:Container(width:48,height:64,color:ink,child:const Icon(Icons.book,color:gold)),title:Text(book.title),subtitle:Text('${book.author} • ${book.category}'),trailing:Text('₺${book.price}',style:const TextStyle(fontWeight:FontWeight.bold)));}
-class BooksPage extends StatelessWidget{const BooksPage({super.key});@override Widget build(BuildContext c)=>Column(children:[const Header('Kitaplar'),const Padding(padding:EdgeInsets.symmetric(horizontal:20),child:SearchBar(hintText:'Kitap veya yazar ara...',leading:Icon(Icons.search),trailing:[Icon(Icons.tune)])),Expanded(child:ListView(children:books.map((b)=>BookTile(b)).toList()))]);}
-class BookDetail extends StatelessWidget{final Book book;const BookDetail(this.book,{super.key});@override Widget build(BuildContext c)=>Scaffold(backgroundColor:ink,appBar:AppBar(backgroundColor:ink,foregroundColor:Colors.white),body:Padding(padding:const EdgeInsets.all(24),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Center(child:Container(width:160,height:220,decoration:BoxDecoration(border:Border.all(color:gold),borderRadius:BorderRadius.circular(14)),child:const Icon(Icons.auto_stories,color:gold,size:80))),const SizedBox(height:22),Text(book.title,style:const TextStyle(color:Colors.white,fontSize:28,fontWeight:FontWeight.bold)),Text(book.author,style:const TextStyle(color:Colors.white70,fontSize:17)),const SizedBox(height:10),Text('★★★★★  ${book.category}',style:const TextStyle(color:gold)),const SizedBox(height:16),Text('₺${book.price}',style:const TextStyle(color:Colors.white,fontSize:25,fontWeight:FontWeight.bold)),const Spacer(),Row(children:[Expanded(child:OutlinedButton(onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>PreviewPage(book))),style:OutlinedButton.styleFrom(foregroundColor:Colors.white,side:const BorderSide(color:gold)),child:const Text('İlk 10 Sayfa'))),const SizedBox(width:12),Expanded(child:FilledButton(onPressed:()=>ScaffoldMessenger.of(c).showSnackBar(const SnackBar(content:Text('Sepete eklendi'))),style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:Colors.black),child:const Text('Sepete Ekle')))])])));}
-class PreviewPage extends StatefulWidget{final Book book;const PreviewPage(this.book,{super.key});@override State<PreviewPage> createState()=>_PreviewPageState();}
-class _PreviewPageState extends State<PreviewPage>{int page=1;@override Widget build(BuildContext c)=>Scaffold(backgroundColor:ink,appBar:AppBar(backgroundColor:ink,foregroundColor:Colors.white,title:Text('${widget.book.title}  $page/10')),body:Column(children:[Expanded(child:Container(margin:const EdgeInsets.all(16),padding:const EdgeInsets.all(28),color:const Color(0xFFFFFCF5),child:Text('Sayfa $page\n\nBu alan kitabın ücretsiz önizlemesidir. Yayında yalnızca ilk 10 sayfa gösterilecektir.',style:const TextStyle(fontSize:18,height:1.8)))),Padding(padding:const EdgeInsets.all(16),child:Row(mainAxisAlignment:MainAxisAlignment.spaceBetween,children:[IconButton(onPressed:page>1?()=>setState(()=>page--):null,icon:const Icon(Icons.chevron_left,color:gold)),Text('$page / 10',style:const TextStyle(color:Colors.white)),IconButton(onPressed:page<10?()=>setState(()=>page++):null,icon:const Icon(Icons.chevron_right,color:gold))]))]));}
-class AuthorPage extends StatelessWidget{const AuthorPage({super.key});@override Widget build(BuildContext c)=>ListView(padding:const EdgeInsets.all(24),children:[const Icon(Icons.edit_document,size:90,color:gold),const SizedBox(height:20),const Text('Eserinizi Bizimle Yayına Hazırlayın',textAlign:TextAlign.center,style:TextStyle(fontSize:27,fontWeight:FontWeight.bold)),const SizedBox(height:15),const Text('Eserinizi gönderin; inceleme, yayına hazırlık ve satış sürecini uygulamadan takip edin.',textAlign:TextAlign.center),...['Profesyonel editörlük desteği','Kapak ve tasarım çalışmaları','Basım süreci rehberliği','Satıştan gelir paylaşımı'].map((x)=>ListTile(leading:const Icon(Icons.check_circle,color:gold),title:Text(x))),FilledButton(onPressed:()=>Navigator.push(c,MaterialPageRoute(builder:(_)=>const ApplicationPage())),style:FilledButton.styleFrom(backgroundColor:gold,foregroundColor:Colors.black),child:const Text('Başvuru Yap'))]);}
-class ApplicationPage extends StatelessWidget{const ApplicationPage({super.key});@override Widget build(BuildContext c)=>Scaffold(appBar:AppBar(title:const Text('Eser Başvurusu')),body:ListView(padding:const EdgeInsets.all(22),children:[const TextField(decoration:InputDecoration(labelText:'Eser Adı',border:OutlineInputBorder())),const SizedBox(height:15),const TextField(maxLines:6,decoration:InputDecoration(labelText:'Eser Hakkında',border:OutlineInputBorder())),const SizedBox(height:15),OutlinedButton.icon(onPressed:()=>ScaffoldMessenger.of(c).showSnackBar(const SnackBar(content:Text('Dosya yükleme backend bağlantısında etkinleşecek.'))),icon:const Icon(Icons.upload_file),label:const Text('PDF / Word Dosyası Seç')),FilledButton(onPressed:()=>ScaffoldMessenger.of(c).showSnackBar(const SnackBar(content:Text('Başvuru taslağı kaydedildi.'))),child:const Text('Devam Et'))]));}
-class CartPage extends StatelessWidget{const CartPage({super.key});@override Widget build(BuildContext c)=>const ListView(children:[Header('Sepetim'),ListTile(title:Text('Sepetiniz'),subtitle:Text('Satın alma altyapısı sonraki aşamada bağlanacak.'))]);}
-class AccountPage extends StatelessWidget{const AccountPage({super.key});@override Widget build(BuildContext c)=>ListView(children:[const Header('Hesabım'),for(final x in const ['Siparişlerim','Favorilerim','Kütüphanem','Başvurularım','Gelir Raporu','Adreslerim','Bildirimler','Ayarlar','Yardım & İletişim'])ListTile(title:Text(x),trailing:const Icon(Icons.chevron_right))]);}
+
+import 'data.dart';
+import 'widgets.dart';
+import 'books.dart';
+import 'author.dart';
+import 'studio.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final store = await AppStore.load();
+  runApp(UcariApp(store: store));
+  unawaited(store.refresh());
+}
+
+class UcariApp extends StatelessWidget {
+  final AppStore store;
+  const UcariApp({super.key, required this.store});
+  @override
+  Widget build(BuildContext context) => MaterialApp(
+    debugShowCheckedModeBanner: false,
+    title: 'UÇARI Yayınevi',
+    theme: ThemeData(
+      useMaterial3: true,
+      scaffoldBackgroundColor: cream,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: gold,
+        surface: cream,
+        primary: const Color(0xFF806020),
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: cream,
+        foregroundColor: ink,
+        centerTitle: true,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFFF0EDE6),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: gold,
+          foregroundColor: ink,
+          minimumSize: const Size(48, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    ),
+    home: Shell(store: store),
+  );
+}
+
+class Shell extends StatefulWidget {
+  final AppStore store;
+  const Shell({super.key, required this.store});
+  @override
+  State<Shell> createState() => _ShellState();
+}
+
+class _ShellState extends State<Shell> {
+  int index = 0;
+  @override
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: widget.store,
+    builder: (context, _) => Scaffold(
+      body: SafeArea(
+        child: IndexedStack(
+          index: index,
+          children: [
+            home(),
+            BooksPage(store: widget.store),
+            AuthorPage(store: widget.store),
+            StudioPage(store: widget.store),
+            account(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: index,
+        onDestinationSelected: (v) => setState(() => index = v),
+        backgroundColor: cream,
+        indicatorColor: gold.withValues(alpha: .20),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Ana Sayfa',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.menu_book_outlined),
+            label: 'Kitaplar',
+          ),
+          NavigationDestination(icon: Icon(Icons.edit_note), label: 'Yazar Ol'),
+          NavigationDestination(
+            icon: Icon(Icons.movie_outlined),
+            label: 'ZEYN',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            label: 'Hesabım',
+          ),
+        ],
+      ),
+    ),
+  );
+  Widget home() => RefreshIndicator(
+    onRefresh: widget.store.refresh,
+    child: ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        Row(
+          children: [
+            const Brand(),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'UÇARI YAYINEVİ',
+                    style: TextStyle(
+                      fontFamily: 'serif',
+                      fontSize: 20,
+                      letterSpacing: 1.4,
+                    ),
+                  ),
+                  Text(
+                    'Eserinizden kitabınıza.',
+                    style: TextStyle(color: gold, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              tooltip: 'İletişim',
+              onPressed: () =>
+                  openPage(context, ContactPage(store: widget.store)),
+              icon: const Icon(Icons.chat_bubble_outline),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () => openPage(
+            context,
+            Scaffold(
+              appBar: AppBar(title: const Text('Kitapları keşfet')),
+              body: BooksPage(store: widget.store, autofocus: true),
+            ),
+          ),
+          child: const InputDecorator(
+            decoration: InputDecoration(prefixIcon: Icon(Icons.search)),
+            child: Text(
+              'Kitap, yazar veya kategori ara…',
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+        ),
+        const SizedBox(height: 22),
+        Container(
+          padding: const EdgeInsets.all(26),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(colors: [ink, Color(0xFF3A3121)]),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'YAZIN  •  PAYLAŞIN  •  YAYINLAYIN',
+                style: TextStyle(color: gold, fontSize: 10, letterSpacing: 1.8),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Her hikaye,\nbir iz bırakır.',
+                style: TextStyle(
+                  fontFamily: 'serif',
+                  color: cream,
+                  height: 1.15,
+                  fontSize: 34,
+                ),
+              ),
+              const SizedBox(height: 22),
+              FilledButton(
+                onPressed: () => setState(() => index = 1),
+                child: const Text('Kitapları Keşfet'),
+              ),
+            ],
+          ),
+        ),
+        if (widget.store.warning != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(
+              widget.store.warning!,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Yeni Çıkanlar',
+              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+            ),
+            TextButton(
+              onPressed: () => setState(() => index = 1),
+              child: const Text('Tümünü gör ›'),
+            ),
+          ],
+        ),
+        if (widget.store.catalog.books.isEmpty)
+          const EmptyState(
+            Icons.auto_stories_outlined,
+            'Yeni hikâyeler yolda',
+            'Kitaplar yayımlandığında kapakları ve ilk 10 sayfalık önizlemeleri burada yer alacak.',
+          )
+        else
+          SizedBox(
+            height: 260,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: widget.store.catalog.books.length.clamp(0, 8),
+              separatorBuilder: (_, i) => const SizedBox(width: 16),
+              itemBuilder: (context, i) {
+                final b = widget.store.catalog.books[i];
+                return SizedBox(
+                  width: 125,
+                  child: InkWell(
+                    onTap: () => openPage(
+                      context,
+                      BookDetail(store: widget.store, book: b),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Cover(b.cover, width: 125, height: 174),
+                        const SizedBox(height: 10),
+                        Text(
+                          b.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          b.author,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        Card(
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(18),
+            leading: const Icon(Icons.edit_document, color: gold),
+            title: const Text('Eserinizi birlikte hazırlayalım'),
+            subtitle: const Text('Ücretsiz yayın • %20 telif'),
+            trailing: const Icon(Icons.arrow_forward),
+            onTap: () => setState(() => index = 2),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          color: ink,
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(18),
+            leading: const Icon(
+              Icons.play_circle_outline,
+              color: gold,
+              size: 36,
+            ),
+            title: const Text(
+              'ZEYN STÜDYO',
+              style: TextStyle(color: cream, letterSpacing: 2),
+            ),
+            subtitle: const Text(
+              'Film, video ve yeni hikâyeler',
+              style: TextStyle(color: Colors.white60),
+            ),
+            trailing: const Icon(Icons.arrow_forward, color: gold),
+            onTap: () => setState(() => index = 3),
+          ),
+        ),
+        const SizedBox(height: 22),
+        const Text(
+          '“İyi kitaplar, daha iyi bir dünyanın başlangıcıdır.”',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontFamily: 'serif', color: gold, fontSize: 16),
+        ),
+        const SizedBox(height: 20),
+      ],
+    ),
+  );
+  Widget account() => ListView(
+    padding: const EdgeInsets.all(20),
+    children: [
+      const SizedBox(height: 16),
+      const Center(child: Brand(size: 100)),
+      const SizedBox(height: 18),
+      const Text(
+        'Okur alanım',
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(height: 8),
+      const Text(
+        'Favorileriniz ve başvuru taslağınız bu cihazda saklanır.',
+        textAlign: TextAlign.center,
+        style: TextStyle(color: Colors.grey),
+      ),
+      const SizedBox(height: 26),
+      ListTile(
+        leading: const Icon(Icons.favorite_border),
+        title: const Text('Favorilerim'),
+        trailing: Text('${widget.store.favorites.length}  ›'),
+        onTap: () => openPage(
+          context,
+          Scaffold(
+            appBar: AppBar(title: const Text('Favorilerim')),
+            body: BooksPage(store: widget.store, favoritesOnly: true),
+          ),
+        ),
+      ),
+      ListTile(
+        leading: const Icon(Icons.drafts_outlined),
+        title: const Text('Başvuru taslağım'),
+        subtitle: Text(widget.store.draft['title'] ?? 'Henüz taslak yok'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => openPage(context, ApplicationPage(store: widget.store)),
+      ),
+      ListTile(
+        leading: const Icon(Icons.help_outline),
+        title: const Text('Nasıl çalışıyoruz?'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => openPage(
+          context,
+          Scaffold(
+            appBar: AppBar(title: const Text('Yayın süreci')),
+            body: AuthorPage(store: widget.store),
+          ),
+        ),
+      ),
+      ListTile(
+        leading: const Icon(Icons.chat_outlined),
+        title: const Text('Yardım ve iletişim'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => openPage(context, ContactPage(store: widget.store)),
+      ),
+      ListTile(
+        leading: const Icon(Icons.info_outline),
+        title: const Text('Uygulama hakkında'),
+        onTap: () => showAboutDialog(
+          context: context,
+          applicationName: 'UÇARI Yayınevi',
+          applicationVersion: '1.1.0',
+          applicationIcon: const Brand(),
+          children: [
+            const Text(
+              'Eserinizden kitabınıza.\nKitap alışverişi Kitapyurdu üzerinden yapılır. Başvurular UÇARI ekibine iletilir.',
+            ),
+          ],
+        ),
+      ),
+      const Divider(),
+      const Padding(
+        padding: EdgeInsets.all(16),
+        child: Text(
+          'Uygulama ödeme veya satış raporu toplamaz. Satış ve telif süreçleri yayınevi tarafından yürütülür.',
+          style: TextStyle(color: Colors.grey, height: 1.5),
+        ),
+      ),
+    ],
+  );
+}
