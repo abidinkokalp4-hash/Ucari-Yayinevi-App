@@ -158,7 +158,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
   final form = GlobalKey<FormState>();
   late final Map<String, TextEditingController> fields;
   String category = 'Roman', attachment = '', attachmentName = '';
-  bool busy = false, dirty = false;
+  bool busy = false, dirty = false, attachmentsChanged = false;
   static const categories = [
     'Roman',
     'Şiir',
@@ -211,7 +211,10 @@ class _ApplicationPageState extends State<ApplicationPage> {
       await widget.store.saveDraft(data);
       if (mounted) setState(() => dirty = false);
       try {
-        await cleanAttachments(attachment);
+        if (attachmentsChanged) {
+          await cleanAttachments(attachment);
+          attachmentsChanged = false;
+        }
       } catch (_) {
         /* A saved draft is not invalidated by optional cleanup. */
       }
@@ -253,6 +256,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
         setState(() {
           attachment = target;
           attachmentName = file.name;
+          attachmentsChanged = true;
           dirty = true;
         });
       }
@@ -462,6 +466,7 @@ class _ApplicationPageState extends State<ApplicationPage> {
                       : () => setState(() {
                           attachment = '';
                           attachmentName = '';
+                          attachmentsChanged = true;
                           dirty = true;
                         }),
                   icon: const Icon(Icons.close),
