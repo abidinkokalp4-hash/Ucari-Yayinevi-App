@@ -208,9 +208,11 @@ class _ShellState extends State<Shell> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Yeni Çıkanlar',
-              style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+            const Expanded(
+              child: Text(
+                'Yeni Çıkanlar',
+                style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
+              ),
             ),
             TextButton(
               onPressed: () => setState(() => index = 1),

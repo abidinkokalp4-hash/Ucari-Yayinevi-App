@@ -77,12 +77,14 @@ class Catalog {
         videos.any(
           (v) => v.id.isEmpty || v.title.isEmpty || secureUrl(v.url) == null,
         ) ||
-        videos.map((v) => v.id).toSet().length != videos.length)
+        videos.map((v) => v.id).toSet().length != videos.length) {
       throw const FormatException('Katalog kayıtları geçersiz.');
+    }
     final email = (d['contactEmail'] as String? ?? '').trim();
     if (email.isNotEmpty &&
-        !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email))
+        !RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$').hasMatch(email)) {
       throw const FormatException('İletişim adresi geçersiz.');
+    }
     return Catalog(books, videos, email);
   }
 }
@@ -136,8 +138,9 @@ class AppStore extends ChangeNotifier {
   Future<void> toggle(Book b) async {
     final ids = favorites;
     if (!ids.add(b.id)) ids.remove(b.id);
-    if (!await prefs.setStringList('favorites', ids.toList()))
+    if (!await prefs.setStringList('favorites', ids.toList())) {
       throw StateError('Kaydedilemedi');
+    }
     notifyListeners();
   }
 
@@ -152,8 +155,9 @@ class AppStore extends ChangeNotifier {
   }
 
   Future<void> saveDraft(Map<String, String> data) async {
-    if (!await prefs.setString('draft', jsonEncode(data)))
+    if (!await prefs.setString('draft', jsonEncode(data))) {
       throw StateError('Taslak kaydedilemedi');
+    }
     notifyListeners();
   }
 
@@ -175,8 +179,9 @@ class AppStore extends ChangeNotifier {
       final uri = secureUrl(source);
       if (uri == null) throw const FormatException();
       final response = await http.get(uri).timeout(const Duration(seconds: 15));
-      if (response.statusCode != 200 || response.bodyBytes.length > 2000000)
+      if (response.statusCode != 200 || response.bodyBytes.length > 2000000) {
         throw const FormatException();
+      }
       final content = utf8.decode(response.bodyBytes);
       final updated = Catalog.decode(content);
       await prefs.setString('catalog', content);

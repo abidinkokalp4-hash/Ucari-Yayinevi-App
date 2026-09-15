@@ -42,7 +42,7 @@ ekler. Gönderim, kabul, ödeme veya gelir konusunda sahte başarı durumu yoktu
 Taslak uygulama içinden silinebilir. Android otomatik yedeklemesi kapalıdır.
 
 ## Kontroller ve APK
-GitHub Actions: Flutter 3.47.4, Java 17, `flutter analyze --no-fatal-infos`,
+GitHub Actions: Flutter 3.47.4, Java 17, `flutter analyze`,
 `flutter test`, `flutter build apk --release`. Android proje dosyaları workflow
 ile üretilir; isim, internet izni, minSdk 24 ve logo uygulanır.
 APK ve SHA256 çıktısı başarılı run'ın artifacts bölümündedir.

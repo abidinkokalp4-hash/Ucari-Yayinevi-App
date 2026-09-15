@@ -57,11 +57,11 @@ void main() {
   test('Turkish search combines author and category and supports sort', () {
     final books = [
       book('1', 'İz', 'Işık', 'Roman'),
-      book('2', 'Ada', 'Deniz', 'Şiir'),
+      book('2', 'Ada', 'Selin', 'Şiir'),
     ];
     expect(filterBooks(books, 'iz', 'Tümü').single.id, '1');
     expect(filterBooks(books, 'ışık', 'Roman').single.id, '1');
-    expect(filterBooks(books, 'deniz', 'Roman'), isEmpty);
+    expect(filterBooks(books, 'selin', 'Roman'), isEmpty);
     expect(filterBooks(books, '', 'Tümü').first.id, '2');
     expect(filterBooks(books, '', 'Tümü', descending: true).first.id, '1');
     expect(books.first.id, '1');
@@ -142,7 +142,11 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: ApplicationPage(store: store)));
     await tester.enterText(find.byType(TextFormField).at(0), 'Test Yazar');
     await tester.enterText(find.byType(TextFormField).at(2), 'Eser Taslağı');
-    await tester.ensureVisible(find.text('Taslağı Kaydet'));
+    await tester.dragUntilVisible(
+      find.text('Taslağı Kaydet'),
+      find.byType(ListView),
+      const Offset(0, -250),
+    );
     await tester.pumpAndSettle();
     await tester.tap(find.text('Taslağı Kaydet'));
     await tester.pumpAndSettle();

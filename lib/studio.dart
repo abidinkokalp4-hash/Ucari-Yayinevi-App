@@ -181,11 +181,12 @@ class _StudioPlayerState extends State<StudioPlayer>
       await next.play();
       hideLater();
     } catch (_) {
-      if (mounted && controller == next)
+      if (mounted && controller == next) {
         setState(() {
           loading = false;
           error = 'Video açılamadı. Bağlantınızı kontrol edip tekrar deneyin.';
         });
+      }
     }
   }
 
@@ -211,8 +212,9 @@ class _StudioPlayerState extends State<StudioPlayer>
   void hideLater() {
     timer?.cancel();
     timer = Timer(const Duration(seconds: 4), () {
-      if (mounted && controller?.value.isPlaying == true)
+      if (mounted && controller?.value.isPlaying == true) {
         setState(() => controls = false);
+      }
     });
   }
 
@@ -296,7 +298,7 @@ class _StudioPlayerState extends State<StudioPlayer>
             : ValueListenableBuilder<VideoPlayerValue>(
                 valueListenable: controller!,
                 builder: (context, value, _) {
-                  if (value.hasError)
+                  if (value.hasError) {
                     return Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -313,6 +315,7 @@ class _StudioPlayerState extends State<StudioPlayer>
                         ],
                       ),
                     );
+                  }
                   final duration = value.duration.inMilliseconds.toDouble();
                   return Stack(
                     children: [
@@ -430,8 +433,9 @@ class _StudioPlayerState extends State<StudioPlayer>
                                             await c.pause();
                                           } else {
                                             if (value.position >=
-                                                value.duration)
+                                                value.duration) {
                                               await c.seekTo(Duration.zero);
+                                            }
                                             await c.play();
                                           }
                                         }),

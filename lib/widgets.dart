@@ -11,8 +11,9 @@ void message(BuildContext c, String text) =>
 Future<void> openLink(BuildContext c, Uri uri) async {
   try {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication) &&
-        c.mounted)
+        c.mounted) {
       message(c, 'Bağlantı açılamadı. Tarayıcı ayarlarınızı kontrol edin.');
+    }
   } catch (_) {
     if (c.mounted) message(c, 'Bağlantı açılamadı. Lütfen tekrar deneyin.');
   }

@@ -217,8 +217,9 @@ class _ApplicationPageState extends State<ApplicationPage> {
       }
       return true;
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         message(context, 'Taslak kaydedilemedi. Lütfen tekrar deneyin.');
+      }
       return false;
     } finally {
       if (mounted) setState(() => busy = false);
@@ -236,8 +237,9 @@ class _ApplicationPageState extends State<ApplicationPage> {
       if (result == null) return;
       final file = result.files.single;
       if (file.size > 25 * 1024 * 1024) {
-        if (mounted)
+        if (mounted) {
           message(context, 'En fazla 25 MB boyutunda bir dosya seçin.');
+        }
         return;
       }
       if (file.path == null) throw const FileSystemException();
@@ -247,18 +249,20 @@ class _ApplicationPageState extends State<ApplicationPage> {
       final target =
           '${dir.path}/${DateTime.now().microsecondsSinceEpoch}.${file.extension}';
       await File(file.path!).copy(target);
-      if (mounted)
+      if (mounted) {
         setState(() {
           attachment = target;
           attachmentName = file.name;
           dirty = true;
         });
+      }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         message(
           context,
           'Dosya eklenemedi. Dosyanın cihazınızda bulunduğunu kontrol edin.',
         );
+      }
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -341,16 +345,18 @@ class _ApplicationPageState extends State<ApplicationPage> {
       for (final field in fields.values) {
         field.clear();
       }
-      if (mounted)
+      if (mounted) {
         setState(() {
           attachment = '';
           attachmentName = '';
           category = 'Roman';
           dirty = false;
         });
+      }
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         message(context, 'Taslak tamamen temizlenemedi. Tekrar deneyin.');
+      }
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -466,11 +472,12 @@ class _ApplicationPageState extends State<ApplicationPage> {
               onPressed: busy
                   ? null
                   : () async {
-                      if (await save() && context.mounted)
+                      if (await save() && context.mounted) {
                         message(
                           context,
                           'Taslak cihazınıza kaydedildi. Henüz gönderilmedi.',
                         );
+                      }
                     },
               child: Text(busy ? 'Kaydediliyor…' : 'Taslağı Kaydet'),
             ),
